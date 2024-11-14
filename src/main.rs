@@ -73,44 +73,32 @@ fn run_script(path_buf: PathBuf, script: Option<&str>, param: Option<&str>) {
 
     if is_root {
         // 已经是root用户，直接执行命令
-        let cd_result = Command::new("cd")
-            .arg(path_buf.clone())
+        let script_command = Command::new("bash")
+            .current_dir(path_buf.clone())
+            .arg(script.unwrap_or("./start.sh"))
+            .arg(param.unwrap_or(""))
             .status()
-            .expect("无法执行cd命令");
-
-        if cd_result.success() {
-            let target_script = format!("./{}", script.unwrap_or("start.sh"));
-            let target_param = param.unwrap_or("").to_string();
-            let start_result = Command::new(target_script.clone())
-                .arg(target_param)
-                .status()
-                .expect(format!("无法执行{}脚本", target_script.clone()).as_str());
-
-            if start_result.success() {
-                println!("{}", format!("执行目录{}的脚本{}成功", path_buf.display(), target_script.clone()));
-            } else {
-                println!("{}", format!("执行目录{}的脚本{}失败", path_buf.display(), target_script.clone()));
-            }
-        } else {
-            println!("切换到 {} 目录失败", path_buf.display());
+            .expect(format!("无法执行sudo命令: {}, 在目录: {}", script.unwrap_or("./start.sh"), path_buf.display()).as_str());
+        if script_command.success() {
+            println!("执行目录{}的脚本{}成功", path_buf.display(), script.unwrap_or("start.sh"));
+        }else {
+            println!("执行目录{}的脚本{}失败", path_buf.display(), script.unwrap_or("start.sh"));
         }
     } else {
         // 不是root用户，尝试使用sudo获取权限执行命令
         let target_script = format!("./{}", script.unwrap_or("start.sh"));
         let target_param = param.unwrap_or("").to_string();
 
-        let sudo_command = Command::new("sudo")
-            .arg("cd")
-            .arg(path_buf.clone())
-            .arg("&&")
+        let script_command = Command::new("sudo")
+            .current_dir(path_buf.clone())
+            .arg("bash")
             .arg(target_script.clone())
             .arg(target_param.clone())
             .status()
-            .expect("无法使用sudo执行命令");
-
-        if sudo_command.success() {
+            .expect(format!("无法执行sudo命令: {}, 在目录: {}", target_script.clone(), path_buf.display()).as_str());
+        if script_command.success() {
             println!("{}", format!("管理员执行目录{}的脚本{}成功", path_buf.display(), target_script.clone()));
-        } else {
+        }else {
             println!("{}", format!("管理员执行目录{}的脚本{}失败", path_buf.display(), target_script.clone()));
         }
     }
