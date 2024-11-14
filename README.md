@@ -52,10 +52,14 @@ A server launcher for starting and managing servers.
 
 - Start and manage the server with a single command
 - Support multiple servers
-- [x] Custom startup commands
-- [x] Custom stop commands
 - Easy to use
 - Use Rhai (A script as similar as Javascript with Lua) script to control the server
+
+
+## :rocket: Plan ##
+
+- [x] Custom startup commands
+- [x] Custom stop commands
 - [ ] More features to come...
 
 ## :rocket: Technologies ##
