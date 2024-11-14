@@ -52,7 +52,11 @@ A server launcher for starting and managing servers.
 
 - Start and manage the server with a single command
 - Support multiple servers
-- [ ] Custom startup commands
+- [x] Custom startup commands
+- [x] Custom stop commands
+- Easy to use
+- Use Rhai (A script as similar as Javascript with Lua) script to control the server
+- [ ] More features to come...
 
 ## :rocket: Technologies ##
 
@@ -60,10 +64,40 @@ The following tools were used in this project:
 
 - [Rust](https://www.rust-lang.org/)
 - [Clap](https://github.com/clap-rs/clap)
+- [Rhai](https://rhai.rs/)
 
 ## :white_check_mark: Requirements ##
 
 Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) and [Node](https://nodejs.org/en/) installed.
+
+## :checkered_flag: Install ##
+
+1. Install the binary executable cli.
+
+```bash
+cargo install ServerLauncher
+```
+
+2. create the config file
+```bash
+mkdir  lua
+touch lua/main.rhai
+```
+
+3. And put it in the config file `lua/main.rhai`
+
+```rhai
+fn start() {
+    run_script("/data/BDZC/LogServer/", "start.sh", "");
+}
+fn stop() {
+    run_script("/data/BDZC/LogServer/", "stop.sh", "");
+}
+```
+
+> `start` method: start the server  
+> `stop` method: stop the server  
+> `run_script` method: run the script，it has three parameters, the first is the path of the script, the second is the script name, the third is the script parameters.
 
 ## :checkered_flag: Starting ##
 

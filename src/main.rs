@@ -39,7 +39,7 @@ fn get_engine() -> Engine {
     engine
 }
 
-fn start() {
+fn run_script_fun(func_name: &str) {
     // 读取文件lua/main.rhai
     let mut main_script_file = fs::File::open("./lua/main.rhai").expect("无法打开lua/main.rhai");
     let mut main_script_content = String::new();
@@ -50,7 +50,7 @@ fn start() {
     let start_fun_result = Func::<(),()>::create_from_script(
         engine,
         main_script_content.as_str(),
-        "start"
+        func_name
     );
     // 执行start函数
     match start_fun_result {
@@ -61,31 +61,14 @@ fn start() {
             eprintln!("{}", e)
         }
     }
-    // run_script(PathBuf::from("/data/BDZC/LogServer/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/CenterServer/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer01/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer02/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer03/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer04/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer05/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/RechargeServer/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/RouterServer10/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/SeasonServer10/"), Some("start.sh"), Some(""));
-    // run_script(PathBuf::from("/data/BDZC/gmsv1001/"), Some("game.sh"), Some("start"));
+}
+
+fn start() {
+    run_script_fun("start");
 }
 
 fn stop() {
-    run_script(PathBuf::from("/data/BDZC/LogServer/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/CenterServer/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer01/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer02/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer03/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer04/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer05/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/RechargeServer/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/RouterServer10/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/SeasonServer10/"), Some("stop.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/gmsv1001/"), Some("game.sh"), Some("stop"));
+    run_script_fun("stop");
 }
 
 fn restart() {
