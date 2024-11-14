@@ -1,0 +1,1 @@
+fn start() {run_script("/data/BDZC/LogServer/", "start.sh", "");}

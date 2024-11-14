@@ -9,6 +9,9 @@ repository = "https://github.com/xsxz01/ServerLauncher"
 homepage = "https://www.iotlearn.cn"
 keywords = ["server", "launcher", "rust"]
 readme = "README.md"
+exclude = [
+    "lua/*"
+]
 
 [dependencies]
 clap = { version = "4.5.19", features = ["derive"] }
