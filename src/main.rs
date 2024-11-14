@@ -1,6 +1,9 @@
+use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
 use std::process::Command;
 use clap::{Parser, Subcommand};
+use rhai::{Engine, Func};
 #[derive(Subcommand)]
 pub enum Action {
     Start,
@@ -20,25 +23,55 @@ fn main() {
     let cli = Cli::parse();
     if let Some(act) = cli.action {
         match act {
-            Action::Start => start(),
+            Action::Start => {
+                start();
+            },
             Action::Stop => stop(),
             Action::Restart => restart(),
         }
     }
 }
 
+fn get_engine() -> Engine {
+    let mut engine = Engine::new();
+    // 注册运行脚本的函数
+    engine.register_fn("run_script", run_script_rhai);
+    engine
+}
+
 fn start() {
-    run_script(PathBuf::from("/data/BDZC/LogServer/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/CenterServer/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer01/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer02/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer03/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer04/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/YiWanLogServer05/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/RechargeServer/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/RouterServer10/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/SeasonServer10/"), Some("start.sh"), Some(""));
-    run_script(PathBuf::from("/data/BDZC/gmsv1001/"), Some("game.sh"), Some("start"));
+    // 读取文件lua/main.rhai
+    let mut main_script_file = fs::File::open("./lua/main.rhai").expect("无法打开lua/main.rhai");
+    let mut main_script_content = String::new();
+    main_script_file.read_to_string(&mut main_script_content).expect("无法读取lua/main.rhai");
+    // 获取引擎
+    let engine = get_engine();
+    // 获取start函数
+    let start_fun_result = Func::<(),()>::create_from_script(
+        engine,
+        main_script_content.as_str(),
+        "start"
+    );
+    // 执行start函数
+    match start_fun_result {
+        Ok(start_fun) => {
+            start_fun().expect("启动命令执行失败");
+        }
+        Err(e) => {
+            eprintln!("{}", e)
+        }
+    }
+    // run_script(PathBuf::from("/data/BDZC/LogServer/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/CenterServer/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer01/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer02/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer03/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer04/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/YiWanLogServer05/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/RechargeServer/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/RouterServer10/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/SeasonServer10/"), Some("start.sh"), Some(""));
+    // run_script(PathBuf::from("/data/BDZC/gmsv1001/"), Some("game.sh"), Some("start"));
 }
 
 fn stop() {
@@ -60,6 +93,10 @@ fn restart() {
     // 延时5s
     std::thread::sleep(std::time::Duration::from_secs(5));
     start();
+}
+
+fn run_script_rhai(path_buf: &str, script: &str, param: &str) {
+    run_script(PathBuf::from(path_buf), Some(script), Some(param))
 }
 
 fn run_script(path_buf: PathBuf, script: Option<&str>, param: Option<&str>) {

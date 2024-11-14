@@ -2,6 +2,14 @@
 name = "ServerLauncher"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A simple server launcher written in Rust"
+authors = ["Pang <pangyuyu@email.cn>"]
+repository = "https://github.com/xsxz01/ServerLauncher"
+homepage = "https://www.iotlearn.cn"
+keywords = ["server", "launcher", "rust"]
+readme = "README.md"
 
 [dependencies]
 clap = { version = "4.5.19", features = ["derive"] }
+rhai = "1.20.0"
